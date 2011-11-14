@@ -1,0 +1,64 @@
+Ideas: (Good)
+- Multidocument summary 
+    - Given: Set of texts known and set of unknown texts
+    - Want: New information, which exists in the unknown texts, but not in the known ones.
+    - Evaluation? Common human written summaries not very useful for evaluation.
+        - Summarize set of 20 or so texts ourselves in this way?
+
+- Another idea:
+- Multidocument summary in the form of a bullet-pointed list
+
+    - Classification?
+        - Even considering only news: The articles could be from multiple topics. Should we
+          consider the topic in our summary in some way?
+        - If doing "bullet-point" summarization this might be useful. The first bulletpoint could
+          say what the collection is generally about (as in, the topic)
+        - Try something other than Naive Bayes for classification?
+
+    - Summary length
+        - Predefined?
+        - Automatically figure out a "good" length considering the original articles (average) length?
+          What is "good"? 1/10th of the length?
+
+    - Clustering?
+        - Could be used to filter out "noise". Assumption here: There are documents, that do not actually
+          cover the topic that is to be summarized.
+        - Maybe not very useful...
+
+    - Sentence ordering
+        - Assuming a bullet-point style extractive summary: Sentence ordering strategies should be
+          evaluated.
+        - Not only importance is to be taken into account here, the sentences should not have forward
+          references as well.
+
+    - Paraphrasing
+        - Bulletpoints might end up with sentences like "He wanted to give them candy.". Here it is
+          unknown who "He" and "them" are. Possibility of using parsing to figure that out and
+          change the sentence to "He [Dad] wanted to give them [children] candy."? Other
+          paraphrasing strategies instead of parsing?
+            - Problem: Parsing is sentence level, this would have to take multiple sentences into account.
+            - Benefit: Fairly easy to evaluate. Just compute a percentage of getting it correct.
+        - Tool: CherryPicker? Seems to do just that and is installed on eniac
+
+- Combining all this:
+One possibility would be a Multi-document (news?) summarizer, that:
+- Creates a list of Bulletpoints as extractive summary
+- Includes a classification as general topic
+- Shows (only? mostly?) new information, given a corpus of known knowledge
+- Orders the sentences in some way, not only most important to least important, but also keeping
+  references intact (if a sentence refers to another one, it shouldn't be listed before that one,
+  even if it's considered more important)
+- Annotates personal pronouns with the entity they refer to
+
+Tools:
+- CherryPicker for the annotation
+- Some classifier (Naive Bayes? SVM?)
+- Some method of ordering. There are two potentially interesting papers linked from the project page.
+
+Evaluation:
+- No Clue.
+- Would be a fairly standard extractive summarization, with just a pinch of additional stuff. So ROUGE
+  evaluation discussed in class might work quite well.
+
+Can we do all of this? If not, which parts should be doable? Is this maybe even too easy, as most of
+the tasks are done by already existing tools/were done in homework assignments?

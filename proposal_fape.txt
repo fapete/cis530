@@ -1,0 +1,130 @@
+
+                              Project Proposal
+                    Multi-document summarization of News
+                        Authors: Quan Dong (qdong@seas)
+                                 Fabian Peternek (fape@seas)
+                                 Yayang Tian (yaytian@seas)
+
+
+1. General motivation
+In a globalized world keeping up with the latest news in politics, finance,
+science and even sports is getting harder every day. One approach to make that
+easier would be to build a system that summarizes news articles so that
+- the user does not need to read the full articles to get a general understanding
+  of what's going on and
+- the user is given enough information to make an educated decision about what
+  articles he wants to read completely.
+The long-term goal of the system would be to include the following steps:
+- Cluster articles so that we get collections where every cluster consists of
+  articles discussing the same topic.
+- Summarize those collections into lists of bullet points.
+
+For the summary we would like to have certain features. First of all it would be
+nice, if the summary told us the general topic of the article, so we need some
+kind of classification for it. The next important part is, that the list needs to
+be ordered in a meaningful way. A good ordering strategy should encompass two
+features: It should order more important sentences before less important
+sentences and it should avoid forward references. So if one sentence has a high
+importance score but a less important sentence is needed to understand the first
+one, then the less important sentence should come first. Finally there should not
+be personal pronouns in the summary, but instead only the named entities, that
+these pronouns are referring to. Otherwise it might not be possible to understand
+the sentences correctly, as they are referring to names that might not even
+appear in the summary.
+
+Furthermore it would be nice to have to include some topic specific information
+in the summary. For example, if the articles are about politics it would be
+interesting to know, if it's world politics, or local. Or even more specific,
+where exactly. If they are about an event of some sort, then where and when the
+event happens/happened would be interesting to know. Another interesting aspect
+is the bullet pointed nature of our summary: Bullet points would not necessarily
+need to be valid sentences, so compression strategies to weed out uninformative
+parts would be quite useful as long as the parts that are important are still
+available afterwards.
+
+2. Specific task to be addressed
+First of all we will be assuming for now, that the articles are already
+clustered, so we do not address that first part of generating the summaries. The
+tasks we would like to address for now are:
+- Classification of articles
+- Sentence ordering/extraction
+
+Of those three we want to focus most attention to sentence ordering. In the paper
+by Barzilay et al. ([1]) three different Algorithms for sentence ordering are
+suggested. The main goal is to implement those algorithms and evaluate their
+results to find out which one works best for our specific task.
+Another part of this is sentence selection. Before being able to order the
+sentences we need to select which sentences should be in the summary. To this end
+we plan to evaluate different metrics of sentence selection.
+
+For the classification we do not plan to implement algorithms ourselves, but
+instead want to use existing tools. The idea is to use two different approaches
+and use the one, that works better for the final summarizer. The one thing we
+will have to do however is to classify the corpus of articles manually, as the
+classes are not given already.
+
+A general timeline for these tasks would be the following:
+Week 1: Sentence extraction metric
+Week 2: Sentence ordering
+Week 3: Classification
+Week 4: Evaluation
+Week 5: Final report
+Week 6: Buffer
+
+3. Approach and resources
+Generally we have three tasks which will use different resources. First we will
+need some kind of sentence selection metric. To do this we will use the Topic
+words metric and centrality. The goal is to find a reasonable combination of both
+metrics to come up with a new metric that might work better than centrality or
+topic weight alone. Additionally we will use similarity metrics at this point in
+an effort to reduce redundancy.
+
+The second task is the sentence ordering. At this point we expect to get a set of
+sentences that was already selected and we will now just try to figure out in
+what order the sentences should appear in the summary. To do this, three
+different algorithms described in [1] will be implemented and evaluated. One of
+the algorithms needs the date of publishing the article, so we will need to
+annotate the sentences in that way. This can be done during the selection phase
+however.
+
+For the classification we will use existing tools. We will use a Naive Bayes
+classifier and a SVM Classifier to classify the documents. We will then proceed
+to calculate the error of both classifiers and use the classifier that works
+better for the summarizing system.
+
+So in conclusion we plan to implement the sentence ordering and selection
+ourselves but using already known methods. External tools will be used for
+ranking the sentences to select them (TopicWords) and the classification of the
+documents (SVM Light and NLTKs Naive Bayes classifier). Additionally we will need
+some tools to extract features for the classification. A POS-tagger might come in
+handy at this point. Furthermore we would like to try to find a way of extracting
+features out of the dependency parse, so a parser might be used as well.
+
+4. Evaluation
+All three tasks addressed in the project will need some kind of different
+evaluation. We will briefly describe the methods we are planning to use here:
+The sentence selection process is basically what a classical extractive summary
+would do. Therefore we assume, that the ROUGE evaluation should work pretty well
+for this part using human written summaries as a baseline, even though that is
+very hard to beat.
+
+The sentence ordering is quite a bit harder to evaluate, because it is completely
+subjective. If one summary is more understandable than another cannot be
+expressed by a mathematical metric. Therefore the proper way to do it would be to
+ask a group of random people to rank differently ordered summaries in some
+categories (in [1] the categories "poor", "fair" and "good" where used). This
+however is probably outside the possible scope for this project. Therefore we
+will try to do this by ourselves. However every team member should only evaluate
+the orderings of the algorithms he did not personally implement. Thus at least
+some independence is preserved.
+
+Finally we need to evaluate the classification. This is fairly easy however, as
+we can just compute the error on a test set. If that test set was not used to
+train the classifier it should give a pretty good approximation of the amount of
+errors the classifier would produce in a real world setting.
+
+
+References:
+[1] Regina Barzilay, Noemie Elhadad and Kathleen McKeown ; Inferring Strategies
+    for Sentence Ordering in Multidocument News Summarization ; JAIR (Journal of
+    Artificial Intelligence Research) ; 2002 ; Vol. 17., pp. 35-55
