@@ -48,7 +48,7 @@ def filter_top_n_words(topic_words_dict, n, word_list):
     return [word for (word,score) in score_wordlist[:n]]
 
 #1.4
-def load_file_sentences(filepath):
+def load_file_sentences(filepath, filename):
     """ Loads sentences of a file into a list and converts everything to
     lower case. """
     # Read file as string first
@@ -60,7 +60,7 @@ def load_file_sentences(filepath):
     # Now use nltks method to read the sentences
     sentences = sent_tokenize(text)
     # convert everything to lower case
-    sentences = [s.lower() for s in sentences]
+    sentences = [(s.lower(), filename) for s in sentences]
     return sentences
 
 def load_collection_sentences(collection, n):
@@ -69,7 +69,7 @@ def load_collection_sentences(collection, n):
     files = os.listdir(collection)
     files_sentences = []
     for f in files:
-        files_sentences.append((load_file_sentences(collection + "/" + f), f))
+        files_sentences.append(load_file_sentences(collection + "/" + f,f))
         n -= 1
         if n == 0:
             break
