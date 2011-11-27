@@ -57,4 +57,61 @@ def augmented_ordering(sentence_list):
         already make up a summary. Strips the dates from the sentences, so that
         the finished summary is returned.
     """
+    pass
 
+def transitive_closure(graph):
+    """ Computes the transitive closure of a given graph. 
+        The Algorithm is straight-forward and fairly inefficient, but
+        as our graphs shouldn't get very large, that probably won't matter.
+        Just compute all possible paths from every node and add the new edges.
+        graph is given as tuple of two lists: One containing the vertices and
+        one containing the edges.
+        Algorithm first computes the connected components of the graph by BFS
+        and then basically just makes cliques out of every component.
+        Complexity should be somewhere around O(VE+V^2).
+    """
+    # Compute components and put use their carthesian product as edges
+    components = compute_components(graph)
+    V = set(graph[0])
+    E = set()
+    for comp in components:
+        E = E.union(set([frozenset([u,v]) for u in comp for v in comp\
+                if u != v]))
+    return (list(V), [tuple(e) for e in E])
+
+def exists_path(start, end, (V,E)):
+    """ Given start and end vertex, checks if there is a path from start to end
+        in the given Graph. 
+        Algorithm uses BFS.
+    """
+    return end in get_reachable_vertices(start, (V,E)) if start != end\
+            else False
+
+def compute_components(graph):
+    """ Computes the connected components of the given graph and returns them as
+        a list of vertexsets.
+    """
+    # Setify the graph
+    V = set(graph[0])
+    E = set([frozenset(edge) for edge in graph[1]])
+    components = []
+    # While unprocessed vertices exist
+    while len(V) != 0:
+        # Take any vertex and compute the connected component it belongs to
+        v = iter(V).next()
+        reachable = get_reachable_vertices(v, (V,E))
+        components.append(reachable)
+        V = V.difference(reachable)
+    return components
+
+def get_reachable_vertices(node, (V,E)):
+    """ Implements BFS to find connected component. """
+    to_visit = [u for u in V if frozenset([node,u]) in E]
+    seen = set([node])
+    while len(to_visit) != 0:
+        v = to_visit.pop()
+        if v not in seen:
+            # get new neighborhood and add v to the component
+            to_visit = [u for u in V if frozenset([v,u]) in E] + to_visit
+            seen.add(v)
+    return seen
