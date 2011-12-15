@@ -10,8 +10,12 @@ import math
 
 from nltk.tokenize import sent_tokenize
 
+from ordering import compute_similarity_matrix, cluster_sentences
+
 __fape_collection_base_path = '/home1/c/cis530/data-hw3/articles/'
-__fape_files_to_load = 2
+__fape_files_to_load = 10
+
+__cluto_bin = '../cluto-2.1.2/Darwin-i386/scluster'
 
 #1.2
 def load_topic_words(topic_file):
@@ -60,8 +64,16 @@ def load_file_sentences(filepath, filename):
     # Now use nltks method to read the sentences
     sentences = sent_tokenize(text)
     # convert everything to lower case
-    sentences = [(s.lower(), filename) for s in sentences]
-    return sentences
+    sentences = map(str.lower, sentences)
+    """sentences = [(s.lower(), filename) for s in sentences]"""
+    # Create segments by clustering. Let's say 3 segments per text.
+    # Similarity metric shall be cosine.
+    fs = create_feature_space(sentences)
+    vectors = [vectorize(fs, sent) for sent in sentences]
+    compute_similarity_matrix(vectors, cosine_similarity, filename+".similarities")
+    segments = cluster_sentences(filename+".similarities", __cluto_bin, 3)
+    # Stitch it all together
+    return zip(sentences, [filename]*len(sentences), segments)
 
 def load_collection_sentences(collection, n):
     """ collection is a directory containing text-files. The first n of those
@@ -101,44 +113,6 @@ def get_linked_words(dependency_list, word):
         elif dep == word:
             words.add(gov)
     return list(words)
-
-#1.6
-def create_graphviz_file(edge_list, output_file):
-    """ Creates a graphviz file to visualize the given edge list. """
-    f = open(output_file, 'w')
-    f.write("graph G {\n")
-    for (s,t) in edge_list:
-        f.write(s + " -- " + t + ";\n")
-    f.write("}")
-    f.close()
-
-def get_top_n_linked_words(topic_word_list, dependency_list, n, word):
-    """ Gets the top n linked words according to their topic word score. """
-    return filter_top_n_words(topic_word_list, n,\
-            get_linked_words(dependency_list, word))
-
-def visualize_collection_topics(topic_file, collection_path, output_file):
-    topic_words = load_topic_words(topic_file)
-    collection = load_collection_sentences(collection_path,\
-            __fape_files_to_load)
-    # To use filter_top_n_words, we'll need the collection as a word list
-    # First create a list of word lists
-    word_lists = [s.split() for f in collection for s in f]
-    # Now merge them all together
-    word_list = reduce(lambda x,y: x+y, word_lists)
-    # Now get the top 10 words of that collection:
-    top10_words = filter_top_n_words(topic_words, 10, word_list)
-    # Parse the dependancy tree
-    dl = dependency_parse_collection(collection_path)
-    # And get the top 5 linked words for the top 10 topicwords:
-    top5_linked = {}
-    for word in top10_words:
-        top5_linked[word] = get_top_n_linked_words(topic_words, dl, 5, word)
-    # Now create the edge list for the graphviz file
-    edge_list = []
-    for (word, linked) in top5_linked.items():
-        edge_list.extend([(word, link) for link in linked])
-    create_graphviz_file(edge_list, output_file)
 
 # 2.1
 def create_feature_space(sentences):

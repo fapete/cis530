@@ -1,11 +1,11 @@
 class Theme:
     def __init__(self):
-        self.sentences = {}
+        self.sentences = []
         self.earliest = None
         self.most_informative = None
 
     def add_sentence(self, ((sent, date, filename, segment), weight)):
-        self.sentences[sent] = weight;
+        self.sentences.append((sent,date,filename,segment,weight))
         if self.earliest is not None:
             self.earliest = (sent,date)\
                     if date < self.earliest[1] else self.earliest
@@ -26,7 +26,7 @@ class Theme:
         else:
             return 1
 
-class Block():
+class Block:
     def __init__(self):
         self.themes = []
         self.earliest = None

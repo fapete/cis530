@@ -1,0 +1,40 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Barzilay \bgroup et al.\egroup }2002]{BarzilayEM02}
+Regina Barzilay, Noemie Elhadad, and Kathleen~R. McKeown.
+\newblock 2002.
+\newblock Inferring strategies for sentence ordering in multidocument news
+  summarization.
+\newblock {\em Journal of Artificial Intelligence Research}, 17:35 -- 55.
+
+\bibitem[\protect\citename{Bollegala \bgroup et al.\egroup
+  }2005]{BollegalaOI05}
+Danushka Bollegala, Naoaki Okazaki, and Mitsuru Ishizuka.
+\newblock 2005.
+\newblock A machine learning approach to sentence ordering for multi-document
+  summarization and its evaluation.
+\newblock In {\em In Proceedings of IJCNLP}.
+
+\bibitem[\protect\citename{Bollegala \bgroup et al.\egroup
+  }2010]{Bollegala201089}
+Danushka Bollegala, Naoaki Okazaki, and Mitsuru Ishizuka.
+\newblock 2010.
+\newblock A bottom-up approach to sentence ordering for multi-document
+  summarization.
+\newblock {\em Information Processing \& Management}, 46(1):89 -- 109.
+
+\bibitem[\protect\citename{Cohen \bgroup et al.\egroup }1999]{CohenSS99}
+W.~W. Cohen, R.~E. Schapire, and Y.~Singer.
+\newblock 1999.
+\newblock Learning to order things.
+\newblock {\em Journal of Artificial Intelligence Research}, 10.
+
+\bibitem[\protect\citename{Donghong and Yu}2008]{DonghongY08}
+Ji~Donghong and Nie Yu.
+\newblock 2008.
+\newblock Sentence ordering based on cluster adjacency in multi-document
+  summarization.
+\newblock {\em Third International Joint Conference on Natural Language
+  Processing}.
+
+\end{thebibliography}

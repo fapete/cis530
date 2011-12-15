@@ -1,0 +1,271 @@
+\documentclass[11pt]{article}
+\usepackage{acl2010}
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{graphicx}
+
+
+%%AL-COMMENTS insert title and name here
+\title{Browsing answers to technical questions using solution clustering and ranking}
+\author{CIS 530 Project Progress Report\\
+\\
+Annie Louis\\
+\textit{lannie@seas.upenn.edu}\\
+November 7, 2010}
+\date{November 7, 2010}
+
+
+\begin{document}
+\maketitle
+
+
+
+%%AL-COMMENTS see how \section and \subsection create different levels of headings.
+%%The section that _should_ appear in your progress report are
+%% Problem definition
+%% Data 
+%% Approach
+%% Results
+%% Discussion and Analysis
+%% Current work
+
+
+\section{Problem definition}
+
+%%AL-COMMENTS replace with your text
+We propose to build a tool for browsing web search results for technical questions.
+For example, consider queries related to common shell tasks, such as 
+``run a process in background''. 
+Several documentation pages on the web contain answers to such questions. In addition, 
+there are a lot of forums where such issues are discussed and resolved. Web 
+search engines index both these types of
+documents and a web search query today on Google, Bing or Yahoo! returns a lot of relevant 
+results to such queries. 
+
+However, it is still time-consuming to find the best solutions from these pages. There is a lot 
+of redundancy among the result pages, some pages only discuss the solution briefly and
+some others are long discussion threads.
+ The aim of this project is to build a better access interface on
+top of the results returned from a search engine. For example, the 
+results for our example query can be summarized briefly 
+as in Figure \ref{fig:example} by clustering and highlighting the different 
+solutions. 
+%%AL-COMMENTS the above line references the figure called 'fig:example'. See below for an example reference to a table. To refer
+%%to a table or a figure, you need to enclose its name in \ref{}
+The unique quality of this interface 
+will be a listing of actual solutions found in the results
+ in the form of code snippets or \emph{solution
+containing sentences} and a ranking of these solutions by popularity. 
+%%AL-COMMENTS \emph{...} makes the contents appear in italics 
+
+
+Recently, the interest in developing tools for technical information access
+is growing \cite{baldwin-EtAl:2010:SOCIAL,kim2010towards}.
+%%AL-COMMENTS the above cites two papers. They are separated by a comma.
+%%These names come from what was assigned in the .bib file  
+
+
+\section{Data}
+We will focus on common queries related to unix shell commands such as our example
+above. We will gather these from FAQ's on Linux help websites. For each of these
+queries, the top 100 web search results will be obtained using the Yahoo! API.
+We compute solution 
+clusters from these results in the following way.
+ 
+\section{Approach}
+Our design uses properties of thread and document structure and user feedback.  
+
+\subsection{Identifying solution sentences} We will build a classifier which 
+given the HTML source of a search result page, classifies
+each sentence in it as \emph{a solution} or \emph{not a solution}. We expect the following
+features to be indicative of this distinction: proximity to query words, 
+query word match with
+subtitle of the section, HTML tags such as 'code' and 'blockquote' to identify code
+snippets, presence of linux command words (using a dictionary), 
+proximity to a thank you note, etc. 
+We will manually annotate sentences from a few pages 
+as solutions or not and use a supervised training approach for this step.
+
+%%AL-COMMENTS an example for inserting a figure. The figure should be in .eps format. Replace the name 'examplefig.eps' with your figure's name and adjust the width parameter if needed.  
+\begin{figure}
+\centering
+\includegraphics[width=80mm]{examplefig.eps}
+%%AL-COMMENTS the caption to be shown below the figure is specified within \caption{...}
+\caption{Example output of our interface}
+%%AL-COMMENTS a name assignment for the figure using \label helps you to 
+%% use this name to refer to the figure in the text
+\label{fig:example}
+\end{figure}
+
+
+
+
+
+
+
+\subsection{Clustering solutions} This step is intended to group similar
+solutions such as use of the same command or solution step. 
+The clustering is unsupervised and based on the similarity of words 
+in the solution sentences 
+and words in their surrounding context. 
+
+\subsection{Ranking solution clusters} Finally, the clusters obtained from the
+previous step are ranked by their 
+size as an indication of popularity. If time permits, more improvements can be done
+to the ranking such as incorporating the quality of the documents linked for 
+each solution. After ranking, we present one solution sentence from each cluster with
+links to some documents where that solution appears.
+
+\subsection{Evaluation}
+The evaluation will be based on a small set of queries and focus on the accuracy of 
+solutions extracted and the ranking of the solutions. They will be performed by me.
+I also intend to use another evaluator for a subset of these queries 
+to compute agreement scores.
+
+\section{Results}
+
+I have completed the following tasks.
+
+\subsection{Extraction of search results}
+I have developed the modules which extract the top web search results 
+for a query. I am using the Yahoo! BOSS API for this task. This API provides
+the top 50 search results which I think is sufficient for the needs of this
+project. 
+
+\subsection{HTML processing}
+Next, I carried
+out some cleaning to extract the text from the HTML sources of the documents.
+The documents come from many different websites and this task was challenging.
+I used a HTML parser and some heuristics to get only the text of the documents
+removing extraneous content such as scripts, menus and advertisements. 
+I still retained information about which parts of the text were in
+titles, headings, tables and emphasis such as bold or code HTML tags. I hope these
+will be useful for feature development. 
+
+I have had to neglect some of the documents where the HTML parsing
+was not successful due to incorrect tags. Some of these documents are among the
+top results, however, I have chosen to ignore these rather than focus on cleaning
+them using another method.
+
+\subsection{Annotation of solution sentences}
+I chose 3 queries---`run a process in background', `compress a file unix', and
+`create a file unix'. For these I obtained the top 50 search results and cleaned
+the HTML source to obtain the text. Then, I chose the top 20 documents for each 
+of these queries for which the HTML cleaning was successful. I split the text of these
+documents into sentences using a tool developed by \newcite{parki}. 
+%%AL-COMMENTS \newcite uses the name of the authors to cite the work with no parentheses 
+%%shown around the name. Useful when the reference is part of the sentence.
+ 
+
+For every sentence in
+these 60 documents, I annotated it as solution or not a solution sentence. I defined
+a solution sentence as one which can be shown to the user as relevant to the query and
+containing the actual step to solve the problem. The sentence can be an example usage of the
+command or a descriptive sentence. 
+
+
+An excerpt of these two types of sentences for the query `run a process in background'
+are shown in Table \ref{tab:sents}.
+
+
+Sometimes it was hard assigning the class for a sentence: 
+for example, when the sentence provides a solution
+on a different OS such as Windows or refers to some commercial tools. I still tried to
+mark these as solutions because it might be informative for the user to know these as well.
+At other times, the sentence splitting was incorrect, and only part of the command snippet
+would be in a given sentence. In these situations, I annotated as solution if the sentence
+still has clarity as to what is being suggested.
+
+Overall, there were 4538 sentences, out of which 309 where annotated as `solution-containing'.
+
+
+%%AL-COMMENTS an example table with one column. Using table* instead of table makes the table span the full width of the page. Useful for large tables.
+\begin{table*}
+\small{        %%AL_COMMENTS makes the contents smaller font
+\begin{tabular}{l} 
+%%AL-COMMENTS 'tabular' is used to specify the number and alignment of columns. The entry that follows tabular keyword in {} has as many items as there are columns. Her number of columns is 1 and the contents are left aligned as specified by 'l'. See later for a table with multiple columns
+{\bf Solution sentences:}\\  
+%%AL_COMMENTS \\ denotes a line break
+any\_command \& Run any command in the background (the symbol " \& " means "run the preceding command in the background").\\
+I use " \& " often when starting a GUI program from an X-terminal.\\
+bg job\_number Place a process in the background, so it is exactly as if it had been started with \& .\\
+taurus December 7th, 2006, 09:12 AM You would put the "nohup" in front of the process.\\
+man nohup CatKiller December 7th, 2006, 09:16 AM I would use screen.\\
+With this information we can move either into the foreground or background with fg and bg.\\
+\hline
+{\bf Not a solution:}\\
+The job\_number is printed on the screen so you can bring the command in the foreground (see below) if you want.\\
+jobs List my background or stopped processes and show their job numbers.\\
+fg job\_number Bring a background or stopped process to the foreground.\\
+This will restart a stopped background process.\\
+The current foreground process can often be stopped with z.\\
+\end{tabular}
+}
+% %%AL-COMMENTS the following is the caption that would appear under the table
+\caption{Example annotations for the query `run a process in background'}
+% %%AL-COMMENTS you should give a name for the table using \label tag, so that you can refer to it in your text. Here the name is 'tab:example'.
+\label{tab:sents}
+\end{table*}
+
+
+
+\subsection{Predicting solution sentences.}
+The distribution of solution vs not solutions sentences is very skewed as expected. I am now
+working on developing features to identify the solutions. I have implemented a few such as:
+
+
+%%AL-COMMENTS an example list. Instead of 'enumerate', use 'itemize' when you want an unnumbered list
+\begin{enumerate}   
+\item Length of sentence
+\item Position in the article
+\item Similarity with query
+\item Presence of some HTML tags such as CODE and PRE and presence 
+of Linux commands (I created a dictionary of common Linux commands from some documents on the
+web). 
+\end{enumerate}
+
+
+I am trying out classification experiments and need to tackle the problem of learning
+from such few positive examples. An initial trial using a SVM classifier produced only the
+majority class (not solution) prediction for all sentences. The results are shown in Table \ref{tab:results}. 
+
+%%AL-COMMENTS an example table with 4 columns
+\begin{table}
+\begin{tabular}{l r r r} 
+%%AL-COMMENTS the above line provides details about the alignment of the column's contents. Here the first column is left aligned, the remaining are right-aligned
+{\bf Method} & {\bf Accuracy} & {\bf Precision} & {\bf Recall}\\  
+%%AL-COMMENTS \\ denotes a line break. {\bf ... } makes the contents enclosed bold. Done above for table header
+Baseline     & 91.0           & 100             & 0\\
+Feature-set1 & 87.5           & 89.5            & 20.0\\
+Feature-set2 & 6.21           & 40.6            & 30.8\\
+Feature-set3 & 87.5           & 93.03           & 2.21\\
+\end{tabular}
+\caption{Performance of different features}
+\label{tab:results}
+\end{table}
+
+
+
+
+\section{Discussion and analysis}
+
+The main outstanding task is to design more features for classifying solution sentences and
+to try out ways to address the class imbalance to learn a good model. I intend 
+to try using a ranking approach, downsample negative examples in the training
+set or use a sequence classifier such as CRF.
+
+Once, there is some  useful recall from the above step, I will 
+cluster the sentences predicted as solution. This task requires
+designing the features that would be useful indicators of similarity between
+solutions. As a oracle experiment, I can examine what the clustering results would
+be like if we use the annotated solution sentences.
+
+\section{Current work}
+
+
+
+\bibliographystyle{acl}
+%%AL-COMMENTS Here 'forumSearch.bib' is the name of my bib file. Replace with yours. Extension .bib should be ignored from the file name
+\bibliography{forumSearch}
+\end{document}
